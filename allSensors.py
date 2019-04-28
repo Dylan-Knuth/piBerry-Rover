@@ -27,7 +27,7 @@ def frontSensor():
 	pulse_duration = pulse_end_time - pulse_start_time
 	distance = round(pulse_duration * 17150, 2)
 	print "Front Distance:",distance,"cm"
-	GPIO.cleanup()
+#	GPIO.cleanup()
 	return distance
 
 def rightSensor():
@@ -55,7 +55,7 @@ def rightSensor():
 	pulse_duration = pulse_end_time - pulse_start_time
 	distance = round(pulse_duration * 17150, 2)
 	print "Right Distance:",distance,"cm"
-	GPIO.cleanup()
+#	GPIO.cleanup()
 	return distance
 
 def leftSensor():
@@ -83,7 +83,7 @@ def leftSensor():
 	pulse_duration = pulse_end_time - pulse_start_time
 	distance = round(pulse_duration * 17150, 2)
 	print "Left Distance:",distance,"cm"
-	GPIO.cleanup()
+#	GPIO.cleanup()
 	return distance
 
 while True:
@@ -91,4 +91,5 @@ while True:
 	frontSensor()
 	rightSensor()
 	leftSensor()
+	GPIO.cleanup()
 	break

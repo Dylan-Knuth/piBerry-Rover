@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 import RPi.GPIO as GPIO
 import time
 
@@ -59,15 +60,29 @@ def leftTurn():
 
 
 
-print ("-------STARTING PiBerry-------")
-try:    
-    for event in pygame.event.get():
-        if event.type == pygame.KEYUP
-            forward()
-            print('Forward')
-        elif event.type == pygame.KEYDOWN
-            reverse()
-            print('reverse')
+print ("-------STARTING Remote PiBerry-------")
+pressed=pygame.key.get_pressed()
 
-finally:
-    GPIO.cleanup()
+while True:
+	for event in pygame.event.get():
+	    if event.type==pygame.KEYDOWN:
+	        if event.key == pygame.K_UP:
+	           print('Forward')
+		   forward()
+		elif event.key == pygame.K_DOWN:
+		   print('Reverse')
+		   reverse()
+		elif event.key == pygame.K_RIGHT:
+                   print('Right')
+		   rightTurn()
+		elif event.key == pygame.K_LEFT:
+                   print('Left')
+		   leftTurn()
+		elif event.key == pygame.K_SPACE:
+                   print('STOP')
+                   stop()
+		elif event.key == pygame.K_q:
+                   print('Goodbye')
+		   stop()
+		   pygame.quit()
+		   break

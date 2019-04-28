@@ -6,33 +6,23 @@ frontEcho=19
 leftEcho=12
 rightEcho=29
 
-front_right=0
-back_right=0
-front_left=0
-back_left=0
-
 def init():
  GPIO.setmode(GPIO.BCM)
- GPIO.setup(17, GPIO.OUT) #front-right
- GPIO.setup(22, GPIO.OUT) #back-right
- GPIO.setup(23, GPIO.OUT) #front-left
- GPIO.setup(24, GPIO.OUT) #back-left
-
- front_right=GPIO.PWM(17, 100)
- back_right=GPIO.PWM(22, 100)
- front_left=GPIO.PWM(23, 100)
- back_left=GPIO.PWM(24, 100)
-
+ GPIO.setup(17, GPIO.OUT)
+ GPIO.setup(22, GPIO.OUT)
+ GPIO.setup(23, GPIO.OUT)
+ GPIO.setup(24, GPIO.OUT)
 
 def forward():
- front_right.ChangeDutyCycle(50)
- front_left.ChangeDutyCycle(50)
  init()
-
+ GPIO.output(17, True)
+ GPIO.output(22, False)
+ GPIO.output(23, True)
+ GPIO.output(24, False)
 
 def reverse(sec):
 
- #init()
+ init()
  GPIO.output(17, False)
  GPIO.output(22, True)
  GPIO.output(23, False)
@@ -41,7 +31,7 @@ def reverse(sec):
 
 
 def stop(sec):
- #init()
+ init()
  GPIO.output(17, False)
  GPIO.output(22, False)
  GPIO.output(23, False)
@@ -50,7 +40,7 @@ def stop(sec):
  time.sleep(sec)
 
 def rightTurn(sec):
- #init()
+ init()
  GPIO.output(17, False)
  GPIO.output(22, False)
  GPIO.output(23, True)
@@ -59,7 +49,7 @@ def rightTurn(sec):
  print "Turning Left...."
 
 def leftTurn(sec):
- #init()
+ init()
  GPIO.output(17, True)
  GPIO.output(22, False)
  GPIO.output(23, False)
@@ -93,7 +83,6 @@ def frontSensor():
 	distance = round(pulse_duration * 17150, 2)
 	print "Front Distance:",distance,"cm"
 	GPIO.cleanup()
-	init()
 	return distance
 
 def rightSensor():
@@ -122,7 +111,6 @@ def rightSensor():
 	distance = round(pulse_duration * 17150, 2)
 	print "Right Distance:",distance,"cm"
 	GPIO.cleanup()
-	init()
 	return distance
 
 def leftSensor():
@@ -151,26 +139,50 @@ def leftSensor():
 	distance = round(pulse_duration * 17150, 2)
 	print "Left Distance:",distance,"cm"
 	GPIO.cleanup()
-	init()
 	return distance
 
 
-print "-------STARTING PiBerry(PWM)-------"
-
-#frontDistance = frontSensor()
+print "-------STARTING PiBerry-------"
+frontDistance = frontSensor()
 KeepGoing = True
-init()
 
 try:		
 	while KeepGoing:
-#		frontDistance=frontSensor()
+		frontDistance=frontSensor()
 		forward()
 
-		# if (frontDistance<=40.5):
-		# 	stop(1)
+		if (frontDistance<=40.5):
+			stop(1)
+			if (frontDistance<25):
+				stop(1.25)
+				reverse(1)
+				print "---Reversing\n*Beep* *Beep* *Beep*"
+				frontDistance=frontSensor()
+#				time.sleep(2)
 
-		# 	print("STOPPING")
-		# 	KeepGoing=False
+			stop(2)
+			print"---Checking Right Sensor"
+			rightDistance=rightSensor()
+
+			if(rightDistance>30):
+				print"--Turning Right"
+				rightTurn(0.5)
+				stop(1.25)
+				frontDistance=(frontSensor)
+			
+			elif(rightDistance<30):
+				print "Checking Left Sensor"
+				leftDistance=leftSensor()
+
+				if(leftDistance>20):
+					print "---Turing Left"
+					leftTurn(0.5)
+					stop(1.25)
+					frontDistance=frontSensor()
+					#rightDistance=rightSensor()
+				else:
+					print("STOPPING")
+					KeepGoing=False
 except KeyboardInterrupt:
 	print('Kepboard--STOP')
 finally:
